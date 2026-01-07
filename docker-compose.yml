@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  web:
+    # Build from local Dockerfile for CI/CD
+    build:
+      context: .
+      dockerfile: dockerfile
+    # Correct port mapping (app runs on 3000)
+    ports:
+      - "8080:3000"
+    environment:
+      PORT: 3000
+      NODE_ENV: production
+    # Health check for container monitoring
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    # Restart policy for production reliability
+    restart: unless-stopped
+    # Environment file for different deployment stages
+    env_file:
+      - .env.example
+    # Resource limits for production deployment
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
