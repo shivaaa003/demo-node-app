@@ -1,9 +1,0 @@
-version: "3.8"
-
-services:
-  web:
-    image: demo-app:1.0
-    ports:
-      - "8080:8080"
-    environment:
-      PORT: 8080
